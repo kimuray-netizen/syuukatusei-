@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スルリム | 第一印象を、科学する。</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --clinic-blue: #2563eb;
+            --clinic-blue-light: #60a5fa;
+            --accent-red: #f43f5e;
+            --bg-clinic: #fcfdfe;
+            --line-green: #06c755;
+            --gold-gradient: linear-gradient(135deg, #e2b04a 0%, #c69431 100%);
+            --vivid-yellow: #ffea00;
+            --sururim-green: #38a169;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            line-height: 1.6;
+            letter-spacing: 0.02em;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-clinic);
+            min-height: 100vh;
+            box-shadow: 0 0 100px rgba(0,0,0,0.1);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-mont { font-family: 'Montserrat', sans-serif; }
+        
+        .hero-bg {
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 100%), 
+                              url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1000');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 現状課題カード */
+        .reality-card {
+            background: white;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .reality-card-top-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--clinic-blue);
+        }
+        .reality-number-bg {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #f1f5f9;
+            line-height: 1;
+            font-family: 'Montserrat', sans-serif;
+            z-index: 0;
+        }
+        .reality-card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 変化ベネフィットカード */
+        .benefit-card {
+            background: rgba(37, 99, 235, 0.02);
+            border-radius: 24px;
+            padding: 2.5rem 1.5rem;
+            border: 1px solid rgba(37, 99, 235, 0.05);
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+        .benefit-item:last-child { margin-bottom: 0; }
+        .benefit-icon {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 1.5px solid var(--clinic-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* プライスバナー */
+        .price-buy-banner {
+            background: #f43f5e;
+            color: white;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            border-radius: 30px;
+            margin-top: -1rem;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.3);
+        }
+        .price-highlight {
+            background: white;
+            color: #f43f5e;
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* LINEボタン強化エフェクト */
+        .line-button-impact {
+            background-color: var(--vivid-yellow);
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 900;
+            padding: 1.25rem;
+            border-radius: 99px;
+            position: relative;
+            overflow: hidden;
+            font-size: 1.25rem;
+            box-shadow: 0 10px 25px rgba(255, 234, 0, 0.4);
+            text-decoration: none;
+        }
+
+        .animate-pulse-impact {
+            animation: pulse-animation 1.5s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .shine-effect-impact::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -100%;
+            width: 40%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.7);
+            transform: rotate(30deg);
+            animation: shine-anim 2.5s infinite;
+        }
+        @keyframes shine-anim {
+            0% { left: -100%; }
+            20% { left: 150%; }
+            100% { left: 150%; }
+        }
+
+        /* スルリムとは セクション */
+        .about-section {
+            background: white;
+            padding: 40px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .about-card {
+            background: #f8faff;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid #eff6ff;
+            margin-bottom: 30px;
+        }
+        .about-point {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .about-point:last-child { margin-bottom: 0; }
+        .about-point-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+            color: var(--clinic-blue);
+        }
+
+        /* 図解デザイン */
+        .diagram-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .diagram-card {
+            border-radius: 24px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .diagram-diet {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+        }
+        .diagram-sururim {
+            background: #f0fdf4;
+            border: 2px solid var(--sururim-green);
+        }
+        .diagram-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 99px;
+            margin-bottom: 10px;
+        }
+        .tag-diet { background: #9ca3af; color: white; }
+        .tag-sururim { background: var(--sururim-green); color: white; }
+        
+        .diagram-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+        .diagram-visual {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .visual-label {
+            font-size: 0.6rem;
+            font-weight: 900;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .cell-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+        .fat-cell {
+            width: 20px;
+            height: 20px;
+            background: #fbbf24;
+            border-radius: 50%;
+        }
+        .fat-cell.small {
+            width: 8px;
+            height: 8px;
+            margin: 6px;
+        }
+        .diagram-arrow {
+            color: #cbd5e1;
+        }
+        .diagram-desc {
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1.6;
+            color: #334155;
+        }
+        .highlight-line {
+            text-decoration: underline;
+            text-decoration-color: #cbd5e1;
+            text-underline-offset: 4px;
+        }
+
+        /* Q&A 新デザイン */
+        .qa-section {
+            padding: 60px 20px;
+            background: #fff;
+        }
+        .qa-item {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 30px;
+        }
+        .qa-persona {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .qa-question {
+            display: flex; gap: 12px; margin-bottom: 20px;
+        }
+        .qa-q-mark {
+            flex-shrink: 0; color: var(--clinic-blue); font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.5rem; line-height: 1;
+        }
+        .qa-q-text {
+            font-size: 0.95rem; font-weight: 800; color: #1e293b; line-height: 1.5;
+        }
+        .qa-answer {
+            background: #f8faff; border-radius: 16px; padding: 20px; position: relative;
+        }
+        .qa-a-dr {
+            font-size: 0.75rem; font-weight: 800; color: var(--clinic-blue); display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+        }
+        .qa-a-text {
+            font-size: 0.85rem; font-weight: 500; color: #475569; line-height: 1.6;
+        }
+
+        /* アコーディオンクリニックリスト */
+        .network-section {
+            padding: 60px 20px;
+            background: #f8faff;
+        }
+        .clinic-accordion {
+            margin-bottom: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+        }
+        .clinic-accordion details summary {
+            list-style: none; padding: 18px 20px; font-weight: 800; font-size: 0.9rem; color: #1e293b; cursor: pointer; display: flex; justify-content: space-between; align-items: center; outline: none;
+        }
+        .clinic-accordion details summary::after {
+            content: "+"; font-size: 1.2rem; color: var(--clinic-blue); transition: transform 0.3s;
+        }
+        .clinic-accordion details[open] summary::after {
+            content: "−"; transform: rotate(180deg);
+        }
+        .clinic-content {
+            padding: 0 20px 20px 20px; border-top: 1px solid #f1f5f9; padding-top: 15px;
+        }
+        .clinic-sub-area { margin-bottom: 15px; }
+        .clinic-label { font-size: 0.65rem; color: var(--clinic-blue); font-weight: 900; margin-bottom: 5px; display: block; }
+        .clinic-names { font-size: 0.85rem; font-weight: 700; color: #475569; line-height: 1.6; }
+
+        .bounce-arrow {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-8px);}
+            60% {transform: translateY(-4px);}
+        }
+
+        .price-ticket {
+            background: white; border-radius: 20px; display: flex; overflow: hidden; border: 1px solid #eee; box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        .ticket-left {
+            background: var(--gold-gradient); width: 45px; display: flex; align-items: center; justify-content: center; color: white;
+        }
+        .ticket-vertical-text {
+            writing-mode: vertical-rl; transform: rotate(180deg); font-family: 'Playfair Display', serif; font-weight: 700;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="app-container text-slate-900">
+        <!-- Header -->
+        <header class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-blue-50 px-4 h-14 flex justify-between items-center text-slate-900">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-blue-600 rounded flex items-center justify-center text-white font-bold italic text-sm">S</div>
+                <div class="text-sm font-black tracking-tighter uppercase">Sururim</div>
+            </div>
+            <a href="#final-cta" class="bg-blue-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-wider">Contact</a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="relative h-[85vh] flex items-center justify-center hero-bg text-center px-6">
+            <div class="reveal active text-slate-900">
+                <span class="bg-red-500 text-white text-[9px] font-black px-3 py-1 rounded italic uppercase mb-6 inline-block">Official Store Only</span>
+                <h1 class="text-5xl font-black mb-6 leading-tight tracking-tighter text-slate-900">
+                    第一印象を、<br><span class="text-blue-600 italic font-serif text-6xl">武器に。</span>
+                </h1>
+                <div class="w-12 h-1 bg-blue-600 mx-auto mb-8"></div>
+                <h2 class="text-lg font-black text-slate-700 tracking-tight text-slate-900">
+                    就活生の為の、「スルリム」
+                </h2>
+                <p class="text-[10px] text-slate-400 mt-4 tracking-[0.2em] font-bold uppercase text-slate-400">Performance for Professionals</p>
+            </div>
+        </section>
+
+        <!-- 1. リカバリーコスト -->
+        <section id="recovery" class="py-16 px-4 bg-slate-900 text-white text-center">
+            <div class="reveal">
+                <h3 class="text-lg font-black mb-10 leading-relaxed text-white">悪かった「第一印象」を取り戻すコストは<span class="text-blue-500 italic">残酷</span>です。</h3>
+                <div class="space-y-4 mb-10">
+                    <div class="p-5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 text-white">
+                        <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white"><i data-lucide="message-square" class="w-5 h-5 text-white"></i></div>
+                        <p class="text-lg font-black text-white">2時間以上の対話</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 text-white text-white">
+                        <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white"><i data-lucide="users" class="w-5 h-5 text-white"></i></div>
+                        <p class="text-lg font-black text-white text-white">5回以上の面会</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 leading-loose opacity-80 mb-8 text-white">第一印象が悪いと評価を「普通」に戻すまでに、最低でもこれほどまでの時間と手間が必要だと言われています。</p>
+                <div class="w-10 h-px bg-white/20 mx-auto my-6 text-white text-white"></div>
+                
+                <div class="py-4">
+                    <p class="text-rose-500 font-black text-2xl md:text-3xl tracking-tighter underline decoration-white/30 underline-offset-8 decoration-4 italic">しかし面接は一回勝負です</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 現実セクション -->
+        <section id="sympathy" class="py-16 px-6 bg-[#f8faff] text-slate-900">
+            <div class="reveal">
+                <div class="mb-10 text-left">
+                    <h3 class="text-[1.7rem] font-black leading-tight text-slate-800">
+                        就活中で多忙なあなたに、<br>
+                        時間は<span class="text-blue-600">ない。</span>
+                    </h3>
+                </div>
+
+                <div class="space-y-4 text-slate-900">
+                    <div class="reality-card">
+                        <div class="reality-card-top-border"></div>
+                        <div class="reality-number-bg">01</div>
+                        <div class="reality-card-content">
+                            <p class="text-base font-black text-slate-800 mb-2 leading-tight">説明会、OB訪問と、<br>食事に気を使う余裕がない</p>
+                            <p class="text-xs text-slate-500 font-medium leading-relaxed">忙しい就活スケジュールの中で、食事制限は現実的ではない。</p>
+                        </div>
+                    </div>
+                    <div class="reality-card">
+                        <div class="reality-card-top-border"></div>
+                        <div class="reality-number-bg">02</div>
+                        <div class="reality-card-content">
+                            <p class="text-base font-black text-slate-800 mb-2 leading-tight">対策に追われて<br>運動する時間がゼロ</p>
+                            <p class="text-xs text-slate-500 font-medium leading-relaxed">ES・面接練習・業界研究で精一杯. ジムに通い続けるのには限界がある。</p>
+                        </div>
+                    </div>
+                    <div class="reality-card">
+                        <div class="reality-card-top-border"></div>
+                        <div class="reality-number-bg">03</div>
+                        <div class="reality-card-content text-slate-900">
+                            <p class="text-base font-black text-slate-800 mb-2 leading-tight">「痩せてから就活を」と思いながら<br>時間が過ぎた</p>
+                            <p class="text-xs text-slate-500 font-medium leading-relaxed">意志の問題ではない. 時間がない。</p>
+                        </div>
+                    </div>
+                    <div class="reality-card">
+                        <div class="reality-card-top-border"></div>
+                        <div class="reality-number-bg">04</div>
+                        <div class="reality-card-content">
+                            <p class="text-base font-black text-slate-800 mb-2 leading-tight">本選考・面接前に<br>印象を変えたい</p>
+                            <p class="text-xs text-slate-500 font-medium leading-relaxed text-slate-500 text-slate-500">第一印象で評価が決まる. 準備できる時間は限られている。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-center text-xs font-black text-blue-600 tracking-tighter mt-8">就活中で多忙なあなたに、時間はない。</p>
+            </div>
+        </section>
+
+        <!-- 3. 痩せるとここまで変わる！！ セクション -->
+        <section id="benefits" class="py-16 px-6 bg-white text-slate-900">
+            <div class="reveal text-slate-900">
+                <div class="text-center mb-8">
+                    <p class="text-blue-600 text-[10px] font-black tracking-widest uppercase mb-2 flex items-center justify-center gap-2">
+                        <i data-lucide="sparkles" class="w-3 h-3 text-blue-600"></i> Result Optimized
+                    </p>
+                    <h3 class="text-2xl font-black leading-tight italic">「スルリムで、<br>あなたはこう変わる。」</h3>
+                </div>
+                
+                <div class="benefit-card">
+                    <h4 class="text-center font-black text-lg mb-8">痩せるとここまで変わる！！</h4>
+                    <div class="space-y-6">
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i data-lucide="check" class="w-3 h-3 text-blue-600"></i></div>
+                            <div class="text-sm">
+                                <p class="font-black text-slate-900 mb-1 text-base leading-tight">顔つきが「デキる就活生の顔」になる</p>
+                                <p class="text-xs text-slate-600 leading-relaxed">顎下のラインが整うだけで、清潔感・知性・鋭さが一気に際立つ。対面0.1秒の視線を変える。</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i data-lucide="check" class="w-3 h-3 text-blue-600"></i></div>
+                            <div class="text-sm">
+                                <p class="font-black text-slate-900 mb-1 text-base leading-tight">「自己管理ができる学生」と一目で判断される</p>
+                                <p class="text-xs text-slate-600 leading-relaxed">体型はセルフマネジメント力の象徴. シルエットが整うだけで、面接官の評価が静かに変わり始める。</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i data-lucide="check" class="w-3 h-3 text-blue-600"></i></div>
+                            <div class="text-sm">
+                                <p class="font-black text-slate-900 mb-1 text-base leading-tight">スーツをかっこよく着こなせる。</p>
+                                <p class="text-xs text-slate-600 leading-relaxed text-slate-600">腹部の余分な脂肪が排出されれば、スーツをかっこよく着こなせる。「服に着られる就活生」から脱却。</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i data-lucide="check" class="w-3 h-3 text-blue-600"></i></div>
+                            <div class="text-sm">
+                                <p class="font-black text-slate-900 mb-1 text-base leading-tight">「圧倒的な清潔感」という武器</p>
+                                <p class="text-xs text-slate-600 leading-relaxed text-slate-600">あご下の余分な「脂肪」を無くすだけで、清潔感はここまで変わります。エリートの余裕を醸し出し出しましょう。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 巨大な矢印 -->
+        <section class="py-8 bg-white text-center">
+            <div class="reveal active">
+                <p class="text-blue-600 font-black text-3xl mb-4 tracking-tighter leading-tight text-blue-600">
+                    「スルリム」なら<br>この変化今だけ！！
+                </p>
+                <div class="flex justify-center bounce-arrow text-blue-600">
+                    <i data-lucide="chevron-down" class="w-16 h-16 text-blue-600"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- インパクト価格バナー -->
+        <section id="buy-change" class="px-6 mb-16 text-white text-white">
+            <div class="reveal active">
+                <div class="price-buy-banner">
+                    <p class="text-[10px] font-black tracking-[0.2em] opacity-80 mb-6 text-white uppercase text-white">Limited Opportunity</p>
+                    
+                    <div class="price-highlight mb-8">
+                        <p class="text-[11px] font-black text-slate-400 mb-1 text-slate-400">気になる脂肪を減らす！！</p>
+                        <p class="text-lg md:text-xl font-black italic tracking-tighter text-pink-500 text-pink-500">
+                            1部位目：税込 <span class="text-4xl md:text-5xl font-mont text-pink-500">9,800</span>円
+                        </p>
+                    </div>
+                    
+                    <div class="mt-4 pt-8 border-t border-white/20">
+                        <div class="mb-6 text-white">
+                            <p class="text-xl font-black text-yellow-300 tracking-tighter drop-shadow-lg flex items-center justify-center gap-2 text-yellow-300">
+                                <i data-lucide="award" class="w-6 h-6 fill-yellow-300"></i> LINE 公式友達３０万人突破！！
+                            </p>
+                        </div>
+
+                        <p class="text-sm font-black mb-4 text-white italic text-white text-white">＼ このチャンスを逃さない ／</p>
+                        
+                        <a href="#" class="line-button-impact animate-pulse-impact shine-effect-impact">
+                            <i data-lucide="message-circle" class="w-7 h-7 text-[#06c755] fill-[#06c755]"></i>
+                            <span>LINEで限定情報をゲットする</span>
+                        </a>
+                        
+                        <p class="mt-6 text-[10px] opacity-80 font-bold text-white text-white">24時間スタッフが受け付けております</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- スルリムとは セクション -->
+        <section id="about-sururim" class="about-section text-slate-900">
+            <div class="reveal">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-black border-b-4 border-blue-600 inline-block pb-1 text-slate-900">スルリムとは</h3>
+                </div>
+
+                <div class="about-card space-y-8">
+                    <div class="about-point">
+                        <div class="about-point-icon"><i data-lucide="zap" class="w-6 h-6 text-blue-600"></i></div>
+                        <div>
+                            <p class="text-sm font-black text-blue-600 mb-1 text-blue-600">圧倒的な排出効率</p>
+                            <p class="text-xs font-bold text-slate-800 leading-relaxed text-slate-800">
+                                一回の施術で約３５%の脂肪細胞を排出。<br>従来の脂肪溶解の５回分の効果。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="about-point">
+                        <div class="about-point-icon"><i data-lucide="clock" class="w-6 h-6 text-blue-600"></i></div>
+                        <div>
+                            <p class="text-sm font-black text-blue-600 mb-1 text-blue-600">タイムレス・ケア</p>
+                            <p class="text-xs font-bold text-slate-800 leading-relaxed text-slate-800 text-slate-800">
+                                一部位約１５分だから時間のない就活中にも最適！
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="about-point">
+                        <div class="about-point-icon"><i data-lucide="check-circle" class="w-6 h-6 text-blue-600"></i></div>
+                        <div>
+                            <p class="text-sm font-black text-blue-600 mb-1 text-blue-600 text-blue-600">ダウンタイム０を追求</p>
+                            <p class="text-xs font-bold text-slate-800 leading-relaxed text-slate-800 text-slate-800">
+                                スルリムは体液に近い浸透圧に調整されているため、ダウンタイムも０を追求できます！。翌日には面接もいけます！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 図解部分 -->
+                <div class="diagram-container">
+                    <div class="diagram-card diagram-diet">
+                        <span class="diagram-tag tag-diet">× 一般的なダイエット</span>
+                        <h4 class="diagram-title text-slate-800">細胞が「小さくなるだけ」</h4>
+                        <div class="diagram-visual">
+                            <div class="text-center">
+                                <p class="visual-label uppercase">Before</p>
+                                <div class="cell-group">
+                                    <div class="fat-cell"></div><div class="fat-cell"></div><div class="fat-cell"></div>
+                                    <div class="fat-cell"></div><div class="fat-cell"></div><div class="fat-cell"></div>
+                                </div>
+                            </div>
+                            <i data-lucide="arrow-right" class="diagram-arrow w-5 h-5"></i>
+                            <div class="text-center">
+                                <p class="visual-label uppercase">After</p>
+                                <div class="cell-group">
+                                    <div class="fat-cell small"></div><div class="fat-cell small"></div><div class="fat-cell small"></div>
+                                    <div class="fat-cell small"></div><div class="fat-cell small"></div><div class="fat-cell small"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="diagram-desc">
+                            脂肪細胞を小さくしても、<span class="font-black text-slate-900 highlight-line text-slate-900">細胞の「数」は変わりません。</span><br>
+                            食事を戻すと、またパンパンに膨らんでリバウンドする可能性があります。
+                        </p>
+                    </div>
+
+                    <div class="diagram-card diagram-sururim">
+                        <span class="diagram-tag tag-sururim">◎ スルリム式</span>
+                        <h4 class="diagram-title text-emerald-800 italic text-emerald-800">細胞の「数」を物理的に減らす</h4>
+                        <div class="diagram-visual">
+                            <div class="text-center">
+                                <p class="visual-label uppercase">Before</p>
+                                <div class="cell-group">
+                                    <div class="fat-cell"></div><div class="fat-cell"></div><div class="fat-cell"></div>
+                                    <div class="fat-cell"></div><div class="fat-cell"></div><div class="fat-cell"></div>
+                                </div>
+                            </div>
+                            <i data-lucide="arrow-right" class="diagram-arrow w-5 h-5 text-emerald-300"></i>
+                            <div class="text-center relative">
+                                <p class="visual-label uppercase text-emerald-600">Destroyed <span class="ml-1 opacity-70">💨</span></p>
+                                <div class="cell-group">
+                                    <div class="opacity-0 w-5 h-5"></div><div class="fat-cell"></div><div class="opacity-0 w-5 h-5"></div>
+                                    <div class="fat-cell"></div><div class="opacity-0 w-5 h-5"></div><div class="opacity-0 w-5 h-5"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="diagram-desc">
+                            <span class="text-emerald-600 font-black">だからリバウンドしにくい！！</span><br>
+                            脂肪細胞そのものを破壊し<span class="text-emerald-600 font-black highlight-line text-emerald-600">「体外へ排出」</span>します。<br>
+                            脂肪を溜めるための「器」が物理的に無くなるため、<span class="font-black text-slate-900 text-slate-900">リバウンド0を追求できるのです。</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Q&A セクション -->
+        <section id="qa" class="qa-section text-slate-900 text-slate-900 text-slate-900">
+            <div class="reveal">
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl font-black text-slate-900 text-slate-900">就活生のお悩みQ&A</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest text-slate-400">Questions & Answers</p>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="qa-item">
+                        <div class="qa-persona">21歳 / 文系大学3年 / 本選考1ヶ月前</div>
+                        <div class="qa-question">
+                            <span class="qa-q-mark">Q</span>
+                            <p class="qa-q-text">面接まであと1ヶ月なんですが、今からでも間に合いますか？顎下がずっと気になっていて、証明写真も撮り直したいと思っています。</p>
+                        </div>
+                        <div class="qa-answer text-slate-900 text-slate-900">
+                            <div class="qa-a-dr text-blue-600"><i data-lucide="user-check" class="w-4 h-4"></i> スルリム 担当医師より</div>
+                            <p class="qa-a-text text-slate-600">1ヶ月あれば十分間に合います。スルリムは施術直後〜1週間ほどで効果を実感し始める方が多く、腫れ・ダウンタイムは0を追求しているため、施術翌日からそのまま説明会や授業に参加できます。「施術した翌週に証明写真を撮った」という就活生も実際にいます。まずはLINEでスケジュールをお聞かせください。</p>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="qa-persona">22歳 / 理系大学院1年 / インターン選考1週間前</div>
+                        <div class="qa-question">
+                            <span class="qa-q-mark text-blue-600 text-blue-600">Q</span>
+                            <p class="qa-q-text text-slate-900 text-slate-900">お金があまりないんですが、就活生でも受けられますか？施術費用が心配で…。</p>
+                        </div>
+                        <div class="qa-answer text-slate-900">
+                            <div class="qa-a-dr text-blue-600"><i data-lucide="user-check" class="w-4 h-4"></i> スルリム 担当医師より</div>
+                            <p class="qa-a-text text-slate-600">1部位 税込9,800円でご利用いただけます。当クリニックでは無理な勧誘や追加料金は一切いたしません。ご安心ください。費用面の不安はカウンセリングで正直にお伝えください。無理のない範囲でご提案します。</p>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="qa-persona">23歳 / 既卒・就活中 / 最終面接が2週間後</div>
+                        <div class="qa-question">
+                            <span class="qa-q-mark">Q</span>
+                            <p class="qa-q-text text-slate-900 text-slate-900">最終面接が2週間後に迫っています。今から受けてもギリギリ間に合いますか？</p>
+                        </div>
+                        <div class="qa-answer text-slate-900 text-slate-900">
+                            <div class="qa-a-dr text-blue-600"><i data-lucide="user-check" class="w-4 h-4"></i> スルリム 担当医師より</div>
+                            <p class="qa-a-text text-slate-600">2週間後の最終面接にも十分間に合います。腫れ・ダウンタイムは0を追求しているので、施術を受けた翌日から面接対策を普通に続けられます。「受けたこと」を意識せず就活に集中できるのがスルリムの強みです。</p>
+                        </div>
+                    </div>
+
+                    <div class="qa-item">
+                        <div class="qa-persona">21歳 / 女子大学3年 / 説明会ラッシュ中・面接3週間前</div>
+                        <div class="qa-question">
+                            <span class="qa-q-mark text-blue-600">Q</span>
+                            <p class="qa-q-text text-slate-900">女性でも受けられますか？就活中なので施術後に腫れたり、休まないといけないのが怖くて…。</p>
+                        </div>
+                        <div class="qa-answer text-slate-900">
+                            <div class="qa-a-dr text-blue-600 text-blue-600"><i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i> スルリム 担当医師より</div>
+                            <p class="qa-a-text text-slate-600">その不安こそ、スルリムが最も得意とするところです。腫れ・ダウンタイムは0を追求しており、施術翌日から説明会・OB訪問・授業に普通に参加できます。また効果は直後〜1週間で実感できるため、3週間後の面接には余裕を持って臨めます。「施術したことを誰にも気づかれなかった」という声も多く届いています。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 全国クリニック ネットワーク -->
+        <section id="network" class="network-section text-slate-900 text-slate-900">
+            <div class="reveal">
+                <div class="text-center mb-10 text-slate-900 text-slate-900">
+                    <h3 class="text-2xl font-black text-slate-900 text-slate-900">全国34院展開中</h3>
+                    <p class="text-xs text-blue-600 font-bold mt-2 text-blue-600 text-blue-600">お近くのクリニックをチェック</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="clinic-accordion">
+                        <details>
+                            <summary>北海道・東北（4院）</summary>
+                            <div class="clinic-content">
+                                <div class="clinic-sub-area">
+                                    <span class="clinic-label text-blue-600">北海道</span>
+                                    <p class="clinic-names">札幌院</p>
+                                </div>
+                                <div class="clinic-sub-area">
+                                    <span class="clinic-label text-blue-600">東北</span>
+                                    <p class="clinic-names">青森院 / 仙台院 / 福島院</p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="clinic-accordion">
+                        <details>
+                            <summary>関東・東京（14院）</summary>
+                            <div class="clinic-content">
+                                <div class="clinic-sub-area">
+                                    <span class="clinic-label text-blue-600 text-blue-600">東京23区</span>
+                                    <p class="clinic-names text-slate-600">新橋院 / 池袋院 / 渋谷院 / 表参道院 / 錦糸町院 / 吉祥寺院</p>
+                                </div>
+                                <div class="clinic-sub-area">
+                                    <span class="clinic-label text-blue-600">関東</span>
+                                    <p class="clinic-names text-slate-600 text-slate-600">横浜駅前院 / 川崎院 / 大宮院 / 高崎院 / 千葉院 / 柏院 / 松戸院 / 宇都宮院</p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="clinic-accordion">
+                        <details>
+                            <summary>中部・関西（8院）</summary>
+                            <div class="clinic-content">
+                                <div class="clinic-sub-area">
+                                    <span class="clinic-label text-blue-600">中部</span>
+                                    <p class="clinic-names text-slate-600">静岡院 / 名古屋院 / 金沢院 / 新潟院</p>
+                                </div>
+                                <div class="clinic-sub-area text-slate-900 text-slate-900">
+                                    <span class="clinic-label text-blue-600">関西</span>
+                                    <p class="clinic-names text-slate-600">心斎橋院 / 梅田院 / 京都院 / 三宮院</p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="clinic-accordion">
+                        <details>
+                            <summary>中国・四国・九州（8院）</summary>
+                            <div class="clinic-content text-slate-900">
+                                <div class="clinic-sub-area text-slate-900">
+                                    <span class="clinic-label text-blue-600 text-blue-600">中国・四国</span>
+                                    <p class="clinic-names text-slate-600 text-slate-600 text-slate-600">広島院 / 岡山院 / 高松院 / 松山院</p>
+                                </div>
+                                <div class="clinic-sub-area">
+                                    <span class="clinic-label text-blue-600">九州・沖縄</span>
+                                    <p class="clinic-names text-slate-600 text-slate-600">天神南院 / 熊本院 / 鹿児島院 / 那覇院</p>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最終CTA -->
+        <section id="final-cta" class="py-16 px-4 bg-slate-50 text-center text-slate-900 text-slate-900">
+            <div class="reveal">
+                <div class="price-ticket mb-10 text-slate-900">
+                    <div class="ticket-left"><div class="ticket-vertical-text text-white">Menu</div></div>
+                    <div class="ticket-content p-6 flex-1 text-slate-900">
+                        <div class="bg-green-500 text-white text-[10px] font-bold rounded-full py-1 px-3 inline-flex items-center gap-1 mb-4 text-white">
+                            <i data-lucide="message-circle" class="w-3 h-3 text-white"></i>LINEで症例を公開中
+                        </div>
+                        <p class="text-pink-500 font-black text-sm mb-1 text-pink-500">気になる脂肪を減らす！</p>
+                        <div class="h-px w-full border-b border-dotted border-pink-200 mb-4 text-pink-500 text-pink-500"></div>
+                        <h4 class="text-base font-black mb-6 text-slate-900">"スルリム"式脂肪破壊術</h4>
+                        <div class="flex items-center justify-center gap-1 text-slate-900">
+                            <span class="text-xs font-black text-slate-500 mt-2 text-slate-500">1部位目</span>
+                            <span class="price-main text-5xl font-black font-mont text-pink-500 text-pink-500 text-pink-500 text-pink-500">9,800</span>
+                            <div class="flex flex-col items-start leading-none text-pink-500 text-pink-500">
+                                <span class="text-[10px] font-black opacity-70 text-pink-500 text-pink-500">（税込）</span>
+                                <span class="text-lg font-black text-pink-500 text-pink-500">円</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-slate-900 rounded-[30px] text-white shadow-xl text-white">
+                    <div class="flex justify-center mb-6 text-white text-white">
+                        <i data-lucide="message-circle" class="w-12 h-12 text-green-400 text-green-400"></i>
+                    </div>
+                    <h3 class="text-lg font-black mb-4 text-white text-white">今すぐ、LINEで予約・相談</h3>
+                    <p class="text-xs text-slate-400 mb-8 leading-relaxed opacity-70 text-white text-white">あなたの第一印象を科学で変える第一歩。<br>24時間体制で専門スタッフがお待ちしております。</p>
+                    <a href="#" class="line-button-impact animate-pulse-impact shine-effect-impact text-slate-900 text-slate-900">
+                        <span>LINEで限定情報をゲットする</span>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-900 text-slate-900"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-12 bg-white border-t border-slate-100 text-center text-slate-900 text-slate-900 text-slate-900">
+            <div class="text-2xl font-serif italic text-blue-600 font-bold mb-4 opacity-20 text-blue-600 text-blue-600">S.</div>
+            <p class="text-[8px] tracking-[0.2em] text-slate-300 uppercase text-slate-300 text-slate-300">© 2024 SURURIM LABORATORY. PROUDLY MADE IN JAPAN.</p>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const reveal = () => {
+            document.querySelectorAll('.reveal').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 50) el.classList.add('active');
+            });
+        };
+        window.addEventListener('scroll', reveal);
+        window.addEventListener('load', reveal);
+    </script>
+</body>
+</html>
